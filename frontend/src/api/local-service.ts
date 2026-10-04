@@ -30,6 +30,12 @@ export function listEntries(key: string, filters: Record<string, string> = {}): 
 
 export function runAction(key: string, id: number, action: string): ActionResult {
   const meta = moduleMeta(key)
+  if (key === 'equipment') {
+    return {
+      ok: false,
+      message: '消防装备的出库、回收、送检、修竣、报废必须走统一生命周期流程，不能直接覆盖状态',
+    }
+  }
   const target = meta.actionTargets[action]
   if (!target) {
     return { ok: false, message: `${meta.entity}没有登记「${action}」这个动作` }
