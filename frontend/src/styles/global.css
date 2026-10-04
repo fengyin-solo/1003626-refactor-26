@@ -35,3 +35,27 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .error-text { color: #b42318; }
 .status-legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 10px; font-size: 12px; color: var(--muted); }
 .legend-item { background: #eef2f7; border-radius: 999px; padding: 2px 10px; }
+
+/* 消防装备：迁移断点、失败清单、占用/检修记录、领用弹窗 */
+.migration-banner { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; border-radius: 8px; padding: 8px 12px; font-size: 13px; margin-bottom: 12px; }
+.migration-banner.ok { background: #ecfdf3; border-color: #86efac; color: #166534; }
+.failure-panel { background: #fff; border: 1px solid #fca5a5; border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; }
+.failure-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 6px; }
+.data-table.inner { font-size: 12px; }
+.history-row td { background: #f8fafc; }
+.history-grid { display: flex; gap: 24px; }
+.history-grid > div { flex: 1; }
+.history-list { list-style: none; margin: 6px 0 0; padding: 0; font-size: 12px; display: flex; flex-direction: column; gap: 4px; }
+.history-list .muted { color: var(--muted); }
+.tag { border-radius: 999px; padding: 0 8px; margin-left: 6px; font-style: normal; }
+.tag.active { background: #fee2e2; color: #b91c1c; }
+.tag.closed { background: #dcfce7; color: #15803d; }
+.legacy-mark { color: var(--muted); margin-left: 6px; }
+.migration-note { margin: 6px 0 0; padding-left: 16px; color: #92400e; font-size: 12px; }
+.info-text { color: #166534; }
+.modal-mask { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.45); display: flex; align-items: center; justify-content: center; z-index: 20; }
+.modal-card { background: #fff; border-radius: 10px; padding: 18px 20px; width: 360px; box-shadow: 0 12px 32px rgba(15, 23, 42, 0.2); }
+.modal-card h3 { margin: 0 0 12px; font-size: 15px; }
+.prompt-field { display: block; margin-bottom: 10px; font-size: 12px; color: var(--muted); }
+.prompt-field input { width: 100%; margin-top: 4px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; color: #1f2937; }
+.prompt-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }

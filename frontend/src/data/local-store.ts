@@ -48,6 +48,19 @@ export function saveRows(key: string, rows: EntryRow[]): void {
   }
 }
 
+/**
+ * 原子提交：一次动作可能同时改装备、队伍、演练多个模块，要么整批落盘，要么整批不动，
+ * 避免「占用核销了一半」的中间态。直接改调用方手里的行引用即可，这里只负责统一持久化。
+ */
+export function commitAll(mutate: (draft: Record<string, EntryRow[]>) => void): void {
+  const draft = allRows()
+  mutate(draft)
+  cache = { ...draft }
+  if (typeof window !== 'undefined' && window.localStorage) {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cache))
+  }
+}
+
 export function resetRows(key: string): EntryRow[] {
   const rows = clone(SEED_ROWS[key] ?? [])
   saveRows(key, rows)

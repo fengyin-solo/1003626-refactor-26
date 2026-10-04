@@ -1,5 +1,6 @@
 import { MODULE_BY_KEY } from '@/data/modules'
 import { allRows, listRows, resetRows, saveRows } from '@/data/local-store'
+import { checkTransition } from '@/data/transition'
 import type { ActionResult, EntryRow, ModuleMeta, OverviewResult, PageResult } from '@/data/types'
 
 // 会写进数据的「往回走」动作：命中就把这条记录标成异常态，看板上能一眼看出来。
@@ -30,30 +31,27 @@ export function listEntries(key: string, filters: Record<string, string> = {}): 
 
 export function runAction(key: string, id: number, action: string): ActionResult {
   const meta = moduleMeta(key)
-  const target = meta.actionTargets[action]
-  if (!target) {
-    return { ok: false, message: `${meta.entity}没有登记「${action}」这个动作` }
-  }
   const rows = listRows(key)
   const index = rows.findIndex((row) => Number(row.id) === id)
   if (index < 0) {
     return { ok: false, message: `没有找到编号为 ${id} 的${meta.entity}` }
   }
-  const current = String(rows[index].status)
-  if (current === target) {
-    return { ok: false, message: `${meta.entity}已经是「${target}」，不用重复操作` }
+  // 所有模块共用一套状态迁移校验：动作合法、不重复、源状态在白名单内才放行。
+  const check = checkTransition(meta, String(rows[index].status), action)
+  if (!check.ok) {
+    return check
   }
   const lastStatus = meta.statuses[meta.statuses.length - 1]
   const updated: EntryRow = {
     ...rows[index],
-    status: target,
-    pending: target !== lastStatus,
+    status: check.target,
+    pending: check.target !== lastStatus,
     abnormal: NEGATIVE_ACTIONS.some((verb) => action.startsWith(verb)),
   }
   const next = [...rows]
   next[index] = updated
   saveRows(key, next)
-  return { ok: true, message: `${meta.entity}已${action}，当前状态「${target}」` }
+  return { ok: true, message: `${meta.entity}已${action}，当前状态「${check.target}」` }
 }
 
 export function resetModule(key: string): PageResult {
@@ -103,3 +101,32 @@ export function loadOverview(): OverviewResult {
   ]
   return { cards, modules }
 }
+
+/* ----------------------------- 消防装备域门面 ----------------------------- */
+// 装备的状态迁移、占用核销、检修历史都收拢在 equipment-service 里，
+// 页面依旧只认 local-service 这一个出入口。
+export { listRows, resetRows, saveRows } from '@/data/local-store'
+export {
+  activeOccupancyOf,
+  availableEquipment,
+  clearResolvedFailures,
+  compatibilityGroup,
+  ensureMigrationRan,
+  latestRepairDate,
+  maintenanceHistory,
+  migrationItems,
+  migrationSummary,
+  occupancyHistory,
+  retryFailure,
+  runMigration,
+  submitEquipmentAction,
+  unresolvedFailures,
+} from '@/data/equipment-service'
+export type {
+  EquipmentActionInput,
+  EquipmentActionResult,
+  FailedRequest,
+  MaintenanceRecord,
+  MigrationItem,
+  OccupancyRecord,
+} from '@/data/equipment-types'

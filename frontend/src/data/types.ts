@@ -17,6 +17,11 @@ export type ModuleMeta = {
   statuses: string[]
   actions: string[]
   actionTargets: Record<string, string>
+  /**
+   * 共用状态机：动作的源状态白名单。登记了来源的动作只能从白名单状态迁出，
+   * 用来拦住「历史记录回退到已领用」这类逆向跳转；没登记的模块沿用旧的宽松流转。
+   */
+  actionFrom?: Record<string, string[]>
   metrics: string[]
 }
 
